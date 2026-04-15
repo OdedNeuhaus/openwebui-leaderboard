@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "openwebui-leaderboard.fullname" . }}
+  labels:
+    {{- include "openwebui-leaderboard.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "openwebui-leaderboard.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "openwebui-leaderboard.selectorLabels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ include "openwebui-leaderboard.serviceAccountName" . }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: leaderboard
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.targetPort }}
+              protocol: TCP
+          env:
+            - name: OPENWEBUI_URL
+              value: {{ .Values.app.openWebuiUrl | quote }}
+            - name: SYNC_INTERVAL_SECONDS
+              value: {{ .Values.app.syncIntervalSeconds | quote }}
+            - name: LEADERBOARD_TOP
+              value: {{ .Values.app.leaderboardTop | quote }}
+            - name: ACTIVE_WINDOW_HOURS
+              value: {{ .Values.app.activeWindowHours | quote }}
+            {{- if .Values.app.includeAdmins }}
+            - name: INCLUDE_ADMINS
+              value: "1"
+            {{- end }}
+            - name: OPENWEBUI_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ default (printf "%s-db" (include "openwebui-leaderboard.fullname" .)) .Values.database.existingSecret }}
+                  key: {{ .Values.database.existingSecretUrlKey }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- if and (eq .Values.database.type "sqlite") .Values.database.sqlite.existingClaim }}
+          volumeMounts:
+            - name: openwebui-sqlite
+              mountPath: {{ dir .Values.database.sqlite.path }}
+              readOnly: {{ .Values.database.sqlite.readOnly }}
+          {{- end }}
+      {{- if and (eq .Values.database.type "sqlite") .Values.database.sqlite.existingClaim }}
+      volumes:
+        - name: openwebui-sqlite
+          persistentVolumeClaim:
+            claimName: {{ .Values.database.sqlite.existingClaim }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

@@ -1,0 +1,67 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/your-org/openwebui-leaderboard
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+imagePullSecrets: []
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: leaderboard.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: leaderboard-tls
+      hosts:
+        - leaderboard.example.com
+
+resources: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+app:
+  openWebuiUrl: https://openwebui.example.com
+  syncIntervalSeconds: 300
+  leaderboardTop: 25
+  activeWindowHours: 24
+  includeAdmins: false
+
+database:
+  type: postgresql
+  url: ""
+  existingSecret: ""
+  existingSecretUrlKey: database-url
+  sqlite:
+    path: /data/webui.db
+    existingClaim: ""
+    subPath: ""
+    readOnly: true
+  postgresql:
+    host: postgres.example.svc.cluster.local
+    port: 5432
+    database: openwebui
+    username: openwebui
+    password: change-me
+    sslmode: disable

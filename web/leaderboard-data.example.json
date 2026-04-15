@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Finance Ops",
+    "messages": 1482,
+    "feedbacks": 93,
+    "streak": 12,
+    "activeToday": true,
+    "mood": "Case-cracking all week",
+    "color": "linear-gradient(135deg, #5cf2c5, #c0ffe9)"
+  },
+  {
+    "name": "Customer Success",
+    "messages": 1338,
+    "feedbacks": 116,
+    "streak": 9,
+    "activeToday": true,
+    "mood": "Feedback royalty",
+    "color": "linear-gradient(135deg, #f8bc45, #ffe2a1)"
+  }
+]

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>לוח המובילים של HolmesGPT</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&family=Rubik:wght@500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <div class="ambient ambient-a"></div>
+      <div class="ambient ambient-b"></div>
+      <div class="ambient ambient-c"></div>
+
+      <header class="page-header">
+        <div class="brand-lockup">
+          <img
+            class="brand-logo"
+            src="https://raw.githubusercontent.com/HolmesGPT/holmesgpt/master/images/logo.png"
+            alt="HolmesGPT logo"
+          />
+          <div class="brand-copy">
+            <h1>מי מוביל את הטבלה?</h1>
+            <p class="eyebrow">ליגת HolmesGPT</p>
+          </div>
+        </div>
+        <p class="hero-text">
+          תצוגה קלילה, תחרותית וכיפית של השימוש ב-OpenWebUI ברחבי החברה.
+        </p>
+        <p class="header-note">
+          כל הודעה וכל משוב מקדמים אתכם למעלה. המקום הראשון מחכה למי שישתמש יותר.
+        </p>
+      </header>
+
+      <main class="leaderboard-stack">
+        <section class="arena-section glass-card usage-section">
+          <div class="section-heading centered-heading">
+            <div>
+              <p class="eyebrow">לוח ראשי</p>
+              <h2>הכי הרבה הודעות</h2>
+            </div>
+            <span class="section-chip" id="usage-summary">טוען...</span>
+          </div>
+
+          <div class="competition-layout">
+            <div class="podium-area">
+              <div class="podium" id="usage-podium"></div>
+            </div>
+            <div class="table-area">
+              <div class="leaderboard-table" id="usage-table"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="arena-section glass-card feedback-section">
+          <div class="section-heading centered-heading">
+            <div>
+              <p class="eyebrow">לוח משובים</p>
+              <h2>הכי הרבה משובים</h2>
+            </div>
+            <span class="section-chip" id="feedback-summary">טוען...</span>
+          </div>
+
+          <div class="competition-layout">
+            <div class="podium-area">
+              <div class="podium podium-feedback" id="feedback-podium"></div>
+            </div>
+            <div class="table-area">
+              <div class="leaderboard-table" id="feedback-table"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="footer-strip">
+          <div class="mini-card">
+            <span class="mini-label">כוכב הרגע</span>
+            <strong id="spotlight-name">טוען...</strong>
+          </div>
+          <div class="mini-card">
+            <span class="mini-label">אחוז הפעלה</span>
+            <strong id="activation-value">0%</strong>
+          </div>
+          <div class="mini-card">
+            <span class="mini-label">האווירה במשרד</span>
+            <strong id="spotlight-badge">מתחממים</strong>
+          </div>
+        </section>
+
+        <section class="cta-section">
+          <a
+            class="openwebui-button"
+            id="openwebui-button"
+            href="https://your-openwebui-url.example.com"
+            target="_blank"
+            rel="noreferrer"
+          >
+            כניסה ל-OpenWebUI והמשך הטיפוס בטבלה
+          </a>
+        </section>
+      </main>
+    </div>
+
+    <script src="./config.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

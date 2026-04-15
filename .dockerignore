@@ -1,0 +1,7 @@
+.git
+.gitignore
+.codex
+__pycache__/
+*.pyc
+.env
+web/leaderboard-data.json
