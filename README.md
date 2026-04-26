@@ -40,6 +40,12 @@ helm upgrade --install openwebui-leaderboard ./chart/openwebui-leaderboard
 
 The container syncs data from the OpenWebUI database into `leaderboard-data.json` automatically on startup and on a refresh interval.
 
+The leaderboard message totals are aligned with the Open WebUI Admin Analytics metric:
+
+- prefer the `chat_message` analytics table when it exists
+- count assistant responses, not user prompts
+- fall back to assistant messages in the legacy `chat` JSON history on older deployments
+
 ## Airgapped Deployments
 
 The frontend now works without any external browser requests by default:

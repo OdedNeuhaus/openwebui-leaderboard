@@ -8,8 +8,8 @@ that can reach the same database. It currently supports:
 - SQLite out of the box
 - PostgreSQL when `psycopg` or `psycopg2` is installed
 
-It reads OpenWebUI's `user`, `chat`, and `feedback` tables and emits a compact
-JSON file that the frontend can render directly.
+It reads OpenWebUI's `user`, `feedback`, and chat message data and emits a
+compact JSON file that the frontend can render directly.
 """
 
 from __future__ import annotations
@@ -150,6 +150,13 @@ def fetch_rows(connection, query: str) -> list[dict[str, Any]]:
     return [dict(zip(columns, row)) for row in rows]
 
 
+def try_fetch_rows(connection, query: str) -> list[dict[str, Any]] | None:
+    try:
+        return fetch_rows(connection, query)
+    except Exception:
+        return None
+
+
 def open_database(database_url: str):
     parsed = urlparse(database_url)
 
@@ -223,6 +230,17 @@ def fetch_feedback_counts(connection) -> dict[str, int]:
     return {row["user_id"]: int(row["feedback_count"]) for row in rows}
 
 
+def fetch_chat_message_rows(connection) -> list[dict[str, Any]] | None:
+    # OpenWebUI analytics uses the normalized chat_message table when present.
+    return try_fetch_rows(
+        connection,
+        """
+        SELECT user_id, role, created_at
+        FROM chat_message
+        """,
+    )
+
+
 def extract_history_messages(chat_payload: Any) -> Iterable[dict[str, Any]]:
     if not isinstance(chat_payload, dict):
         return []
@@ -249,19 +267,46 @@ def normalize_timestamp(raw_timestamp: Any) -> int | None:
     except (TypeError, ValueError):
         return None
 
-    if timestamp > 10_000_000_000:
-        return timestamp // 1000
+    while timestamp > 10_000_000_000:
+        timestamp //= 1000
     return timestamp
 
 
-def build_message_stats(chats: list[ChatRow]) -> tuple[dict[str, int], dict[str, set[datetime.date]]]:
+def build_message_stats_from_chat_messages(
+    rows: list[dict[str, Any]],
+) -> tuple[dict[str, int], dict[str, set[datetime.date]]]:
+    message_counts: dict[str, int] = defaultdict(int)
+    activity_dates: dict[str, set[datetime.date]] = defaultdict(set)
+
+    for row in rows:
+        if row.get("role") != "assistant":
+            continue
+
+        user_id = row.get("user_id")
+        if not user_id:
+            continue
+
+        message_counts[user_id] += 1
+
+        timestamp = normalize_timestamp(row.get("created_at"))
+        if timestamp is None:
+            continue
+
+        activity_dates[user_id].add(datetime.fromtimestamp(timestamp, UTC).date())
+
+    return message_counts, activity_dates
+
+
+def build_message_stats_from_chat_json(
+    chats: list[ChatRow],
+) -> tuple[dict[str, int], dict[str, set[datetime.date]]]:
     message_counts: dict[str, int] = defaultdict(int)
     activity_dates: dict[str, set[datetime.date]] = defaultdict(set)
 
     for chat in chats:
         for message in extract_history_messages(chat.payload):
             role = message.get("role")
-            if role != "user":
+            if role != "assistant":
                 continue
 
             message_counts[chat.user_id] += 1
@@ -273,6 +318,15 @@ def build_message_stats(chats: list[ChatRow]) -> tuple[dict[str, int], dict[str,
             activity_dates[chat.user_id].add(datetime.fromtimestamp(timestamp, UTC).date())
 
     return message_counts, activity_dates
+
+
+def build_message_stats(connection) -> tuple[dict[str, int], dict[str, set[datetime.date]]]:
+    chat_message_rows = fetch_chat_message_rows(connection)
+    if chat_message_rows:
+        return build_message_stats_from_chat_messages(chat_message_rows)
+
+    chats = fetch_chats(connection)
+    return build_message_stats_from_chat_json(chats)
 
 
 def compute_streak(dates: set[datetime.date]) -> int:
@@ -362,9 +416,8 @@ def main() -> int:
 
     try:
         users = fetch_users(connection)
-        chats = fetch_chats(connection)
         feedback_counts = fetch_feedback_counts(connection)
-        message_counts, activity_dates = build_message_stats(chats)
+        message_counts, activity_dates = build_message_stats(connection)
 
         leaderboard_rows = build_leaderboard_entries(
             users=users,
