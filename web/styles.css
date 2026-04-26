@@ -7,6 +7,8 @@
   --accent-2: #f8bc45;
   --accent-3: #67b7ff;
   --shadow: 0 28px 70px rgba(0, 0, 0, 0.34);
+  --font-sans: "DejaVu Sans", Arial, sans-serif;
+  --font-display: "DejaVu Sans", Arial, sans-serif;
 }
 
 * {
@@ -16,13 +18,16 @@
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: "Heebo", sans-serif;
+  font-family: var(--font-sans);
   color: var(--text);
   background:
     radial-gradient(circle at top left, rgba(92, 242, 197, 0.14), transparent 26%),
     radial-gradient(circle at 88% 12%, rgba(248, 188, 69, 0.14), transparent 22%),
     linear-gradient(145deg, #060c17 0%, #0a1427 52%, #09101d 100%);
   overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 button,
@@ -92,14 +97,41 @@ a {
 .brand-logo {
   width: 104px;
   height: 104px;
-  object-fit: contain;
   filter: drop-shadow(0 18px 26px rgba(0, 0, 0, 0.24));
+}
+
+.brand-logo-mark {
+  border-radius: 30px;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 28% 22%, rgba(255, 255, 255, 0.24), transparent 36%),
+    linear-gradient(135deg, #5cf2c5, #67b7ff 58%, #f8bc45);
+  color: #07121d;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.08em;
+}
+
+.brand-logo-image {
+  object-fit: contain;
+}
+
+.is-hidden {
+  display: none;
 }
 
 .brand-copy {
   text-align: right;
   display: grid;
   gap: 8px;
+}
+
+.eyebrow,
+h1,
+h2 {
+  font-family: "DejaVu Sans", Arial, sans-serif;
+  font-synthesis: none;
 }
 
 .eyebrow {
@@ -114,8 +146,9 @@ a {
 h1,
 h2 {
   margin: 0;
-  font-family: "Rubik", sans-serif;
   line-height: 0.95;
+  font-weight: 700;
+  letter-spacing: 0;
 }
 
 h1 {
@@ -319,7 +352,7 @@ h2 {
 }
 
 .podium-score {
-  font-family: "Rubik", sans-serif;
+  font-family: var(--font-display);
   font-size: clamp(1.8rem, 4vw, 2.8rem);
   font-weight: 800;
   margin: 8px 0 10px;
@@ -424,7 +457,7 @@ h2 {
   justify-self: stretch;
   font-size: 1.22rem;
   font-weight: 700;
-  font-family: "Rubik", sans-serif;
+  font-family: var(--font-display);
   text-align: center;
   width: 100%;
 }
@@ -500,7 +533,7 @@ h2 {
   padding: 22px 28px;
   text-decoration: none;
   color: #07121d;
-  font-family: "Rubik", sans-serif;
+  font-family: var(--font-display);
   font-size: clamp(1.2rem, 3vw, 1.8rem);
   font-weight: 800;
   background:

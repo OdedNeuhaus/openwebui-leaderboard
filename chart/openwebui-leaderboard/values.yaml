@@ -43,6 +43,7 @@ affinity: {}
 
 app:
   openWebuiUrl: https://openwebui.example.com
+  brandLogoUrl: ""
   syncIntervalSeconds: 300
   leaderboardTop: 25
   activeWindowHours: 24

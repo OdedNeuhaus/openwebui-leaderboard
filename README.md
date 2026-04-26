@@ -39,3 +39,12 @@ helm upgrade --install openwebui-leaderboard ./chart/openwebui-leaderboard
 ```
 
 The container syncs data from the OpenWebUI database into `leaderboard-data.json` automatically on startup and on a refresh interval.
+
+## Airgapped Deployments
+
+The frontend now works without any external browser requests by default:
+
+- no Google Fonts calls
+- no remote logo fetch
+
+If you want a custom logo, set `BRAND_LOGO_URL` in Docker or `app.brandLogoUrl` in Helm to a reachable internal URL. Leaving it empty keeps the built-in local brand mark and avoids airgapped timeout issues.

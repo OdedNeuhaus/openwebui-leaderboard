@@ -1,5 +1,6 @@
 const OPENWEBUI_URL =
   window.APP_CONFIG?.OPENWEBUI_URL || "https://your-openwebui-url.example.com";
+const BRAND_LOGO_URL = window.APP_CONFIG?.BRAND_LOGO_URL || "";
 
 const mockLeaderboardData = [
   {
@@ -225,7 +226,29 @@ async function loadLeaderboardData() {
   return payload;
 }
 
+function applyBrandLogo() {
+  const logoImage = document.getElementById("brand-logo-image");
+  const logoMark = document.getElementById("brand-logo-mark");
+
+  if (!logoImage || !logoMark || !BRAND_LOGO_URL) {
+    return;
+  }
+
+  logoImage.addEventListener("load", () => {
+    logoImage.classList.remove("is-hidden");
+    logoMark.classList.add("is-hidden");
+  });
+
+  logoImage.addEventListener("error", () => {
+    logoImage.classList.add("is-hidden");
+    logoMark.classList.remove("is-hidden");
+  });
+
+  logoImage.src = BRAND_LOGO_URL;
+}
+
 document.getElementById("openwebui-button").href = OPENWEBUI_URL;
+applyBrandLogo();
 window.addEventListener("resize", fitPodiumScores);
 
 loadLeaderboardData()

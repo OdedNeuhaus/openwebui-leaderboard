@@ -9,6 +9,7 @@ write_config() {
   cat > "$WEB_DIR/config.js" <<EOF
 window.APP_CONFIG = {
   OPENWEBUI_URL: "${OPENWEBUI_URL:-https://your-openwebui-url.example.com}",
+  BRAND_LOGO_URL: "${BRAND_LOGO_URL:-}",
 };
 EOF
 }

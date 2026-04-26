@@ -37,6 +37,8 @@ spec:
           env:
             - name: OPENWEBUI_URL
               value: {{ .Values.app.openWebuiUrl | quote }}
+            - name: BRAND_LOGO_URL
+              value: {{ .Values.app.brandLogoUrl | quote }}
             - name: SYNC_INTERVAL_SECONDS
               value: {{ .Values.app.syncIntervalSeconds | quote }}
             - name: LEADERBOARD_TOP
